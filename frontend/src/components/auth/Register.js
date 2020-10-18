@@ -1,9 +1,22 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 // React router
 import {Link} from 'react-router-dom';
+import alertContext from '../../context/Alerts/alertContext';
+import authContext from '../../context/Authentication/authContext';
 
-const Register = () => {
-    document.title = "Project-Tasks - Register"
+const Register = (props) => {
+    // Contexts
+    const {alert, showAlertFn} = useContext(alertContext);
+    const { message, authenticated, createUserFn} = useContext(authContext);
+    // User register or detect an error
+    useEffect(() => {
+        if(authenticated){
+            props.history.push('/projects');
+        }
+        if(message){
+            showAlertFn(message.message, message.category);
+        }
+    }, [message, authenticated, props.history]);
     // State
     const [loginForm, setLoginForm] = useState({
         username: '',
@@ -24,11 +37,33 @@ const Register = () => {
     const handleSubmit = e => {
         e.preventDefault();
         // Validate inputs
+        if(username.trim() === '' || email.trim() === '' || password.trim() === '' || confirmPassword.trim() === ''){
+            showAlertFn("All the fields are required", "alert-error");
+            return;
+        }
         // Password validate
+        if(password.length < 6){
+            showAlertFn("Password must have at least 6 characters", "alert-error");
+            return;
+        }
+        // Validate the two passwords are equal
+        if(password !== confirmPassword){
+            showAlertFn("Passwords don't match", "alert-error");
+            return;
+        }
+
+        createUserFn(loginForm);
 
     }
     return (
         <div className="user-form">
+            {alert ?
+                (<div className={`alerta alerta-error`}>
+                    {alert.msg}
+                </div> )
+                :
+                null
+            }
             <div className="form-container sombra-dark">
                 <h2>Create your account ProjectTasks</h2>
                 

@@ -5,10 +5,16 @@ const dbconnection = require('./config/config');
 // Express
 const express = require('express');
 const app = express();
+const morgan = require('morgan');
+// CORS
+const cors = require('cors');
 // Start db connection
 dbconnection();
 // Body parser
 app.use(express.json({ extended: true}));
+// CORS
+app.use(cors());
+app.use(morgan('dev'));
 // Import routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users',require('./routes/users'));

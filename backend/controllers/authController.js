@@ -38,7 +38,7 @@ exports.authenticateUser = async (req, res) => {
         if(!pass){
             res.status(400).json({
                 ok: false,
-                message: "password incorrect"
+                message: "User or password incorrect"
             });
         }
         // JWT
@@ -61,5 +61,21 @@ exports.authenticateUser = async (req, res) => {
         });
     } catch (error) {
         
+    }
+}
+
+exports.getAuthenticatedUser = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id);
+        res.json({
+            ok: true,
+            user
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            message: "There was an error"
+        });
     }
 }

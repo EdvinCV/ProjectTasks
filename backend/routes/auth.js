@@ -3,9 +3,14 @@ const express = require('express');
 const router = express.Router();
 // Body check function
 const {check} = require('express-validator');
-const { authenticateUser } = require('../controllers/authController');
+const { authenticateUser, getAuthenticatedUser } = require('../controllers/authController');
+// Authentication mid
+const authentication = require('../middlewares/authentication');
+
 // Controllerconst authController = reu
-router.post('/',
+router
+    .get('/', authentication, getAuthenticatedUser)
+    .post('/',
     [
         check('email', 'The email is obligatory').not().isEmpty(),
         check('password', 'The password is obligatory').not().isEmpty()

@@ -1,9 +1,24 @@
-import React, {useState} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 // React Router
 import {Link} from 'react-router-dom';
+import alertContext from '../../context/Alerts/alertContext';
+import authContext from '../../context/Authentication/authContext';
 
-const Login = () => {
-    document.title = "Project-Tasks - Login"
+const Login = (props) => {
+    const {alert, showAlertFn} = useContext(alertContext);
+    const { message, authenticated, loginUserFn, userAuthenticated} = useContext(authContext);
+
+    useEffect(() => {
+        if(localStorage.getItem('token')){
+            userAuthenticated();
+        }
+        if(authenticated){
+            props.history.push('/projects');
+        }
+        if(message){
+            showAlertFn(message.message, message.category);
+        }
+    }, [message, authenticated, props.history]);
     // State
     const [loginForm, setLoginForm] = useState({
         email: '',
@@ -22,14 +37,23 @@ const Login = () => {
     const handleSubmit = e => {
         e.preventDefault();
         // Validate inputs
-
+        if(email.trim() === '' || password.trim() === ''){
+            showAlertFn('All the fields are required', 'alerta-error');
+            return;
+        }
+        loginUserFn(loginForm);
     }
-
     return (
         <div className="user-form">
+            {alert ?
+                (<div className={`alerta alerta-error`}>
+                    {alert.msg}
+                </div> )
+                :
+                null
+            }
             <div className="form-container sombra-dark">
                 <h2>Login ProjectTasks</h2>
-                
                 <form
                     onSubmit={handleSubmit}
                 >

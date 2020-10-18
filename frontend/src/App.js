@@ -8,18 +8,31 @@ import Projects from './components/projects/Projects';
 // Context provider
 import ProjectState from './context/Projects/projectsState';
 import TaskState from './context/Tasks/taskState';
+import AlertState from './context/Alerts/alertState';
+import AuthState from './context/Authentication/authState';
+import authToken from './config/setToken';
+import PrivateRoute from './components/routes/PrivateRoute';
+
+const token = localStorage.getItem('token');
+if(token){
+  authToken(token);
+}
 
 function App() {
   return (
     <ProjectState>
       <TaskState>
-        <Router>
-          <Switch>
-            <Route exact path="/" component={Login} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/projects" component={Projects} />
-          </Switch>
-        </Router>
+        <AlertState>
+          <AuthState>
+            <Router>
+              <Switch>
+                <Route exact path="/" component={Login} />
+                <Route exact path="/register" component={Register} />
+                <PrivateRoute exact path="/projects" component={Projects} />
+              </Switch>
+            </Router>
+          </AuthState>
+        </AlertState>
       </TaskState>
     </ProjectState>
   );
