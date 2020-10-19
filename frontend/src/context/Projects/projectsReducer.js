@@ -1,5 +1,5 @@
 // Actions types constants
-import {PROJECT_FORM, SELECTED_PROJECT, DELETE_PROJECT} from '../../types';
+import {PROJECT_FORM, GET_PROJECTS, POST_PROJECT, SELECTED_PROJECT, DELETE_PROJECT, PROJECT_ERROR} from '../../types';
 
 export default (state, action) => {
     switch(action.type){
@@ -15,10 +15,28 @@ export default (state, action) => {
                 selectedProject: action.payload
             }
         }
+        case GET_PROJECTS: {
+            return {
+                ...state,
+                projects: action.payload
+            }
+        }
+        case POST_PROJECT: {
+            return {
+                ...state,
+                project: action.payload
+            }
+        }
         case DELETE_PROJECT : {
             return {
                 ...state,
                 selectedProject: null
+            }
+        }
+        case PROJECT_ERROR: {
+            return {
+                ...state,
+                message: action.payload
             }
         }
         default: 

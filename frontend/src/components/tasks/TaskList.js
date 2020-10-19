@@ -39,7 +39,7 @@ const TaskList = () => {
                             
                         }
                     </ul>
-                    <button onClick={() => (deleteProjectFn(selectedProject.id))} type="button" className="btn btn-eliminar">
+                    <button onClick={() => (deleteProjectFn(selectedProject._id))} type="button" className="btn btn-eliminar">
                         Delete project &times;
                     </button>
                     </>

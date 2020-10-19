@@ -7,7 +7,6 @@ const ProjectForm = () => {
     const {newProject, showProjectFormFn, postProjectFn } = useContext(projectContext);
     // State
     const [project, setProject] = useState({
-        id: '',
         name: ''
     });
     const [error, setError] = useState(false);
@@ -29,7 +28,7 @@ const ProjectForm = () => {
         }
         setError(false);
         // Dispatch project
-        postProjectFn(name);
+        postProjectFn(project);
         // Clear form
         setProject({
             name: ''

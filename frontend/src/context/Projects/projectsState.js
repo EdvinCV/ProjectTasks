@@ -4,18 +4,18 @@ import projectContext from './projectsContext';
 // Reducer
 import projectReducer from './projectsReducer';
 // Action types
-import { PROJECT_FORM, GET_PROJECTS, SELECTED_PROJECT, DELETE_PROJECT } from '../../types';
+import { PROJECT_FORM, PROJECT_ERROR, POST_PROJECT, GET_PROJECTS, SELECTED_PROJECT, DELETE_PROJECT } from '../../types';
+// Axios client
+import client from '../../config/axios';
 
 const ProjectState = (props) => {
     // Initial state of reducer
     const initialState = {
-        projects: [
-            {id: 1, name: 'Node Project'},
-            {id: 2, name: 'Java Project'},
-            {id: 3, name: 'Mobile Application Project'}
-        ],
+        projects: [],
         newProject: false,
-        selectedProject: null
+        selectedProject: null,
+        project: null,
+        message: null
     }
     // Reducer dispatch
     const [state, dispatch] = useReducer(projectReducer, initialState);
@@ -27,19 +27,65 @@ const ProjectState = (props) => {
         });
     }
     // GET - Projects
+    const getProjectsFn = async () => {
+        try {
+            const resp = await client.get('/api/projects');
+            dispatch({
+                type: GET_PROJECTS,
+                payload: resp.data.data
+            });
+        } catch (error) {
+            const alert = {
+                msg: "There was an error",
+                category: "alerta-error"
+            }
+            dispatch({
+                type: PROJECT_ERROR,
+                payload: alert
+            });
+        }
+    }
     // POST - Projects
-    const postProjectFn = (name) => {
-        // ACTION
-        // FETCH
-        console.log("Project added")
+    const postProjectFn = async (project) => {
+        try {
+            const resp = await client.post('/api/projects', project);
+            console.log(resp);
+            dispatch({
+                type: POST_PROJECT,
+                payload: project
+            });
+        } catch (error) {
+            const alert = {
+                msg: "There was an error",
+                category: "alerta-error"
+            }
+            dispatch({
+                type: PROJECT_ERROR,
+                payload: alert
+            });
+        }
         showProjectFormFn(false);
+        getProjectsFn();
     }
     // DELETE PROJECT
-    const deleteProjectFn = (projectId) => {
-        dispatch({
-            type: DELETE_PROJECT,
-            payload: projectId
-        });
+    const deleteProjectFn = async (projectId) => {
+        try {
+            const resp = await client.delete(`/api/projects/${projectId}`);
+            console.log(resp);
+            dispatch({
+                type: DELETE_PROJECT
+            });
+        } catch (error) {
+            const alert = {
+                msg: "There was an error",
+                category: "alerta-error"
+            }
+            dispatch({
+                type: PROJECT_ERROR,
+                payload: alert
+            });
+        }
+        getProjectsFn();
     }
     // SELECTED PROJECT
     const selectedProjectFn = (project) => {
@@ -56,7 +102,9 @@ const ProjectState = (props) => {
                 projects: state.projects,
                 newProject: state.newProject,
                 selectedProject: state.selectedProject,
+                message: state.message,
                 showProjectFormFn,
+                getProjectsFn,
                 postProjectFn,
                 deleteProjectFn,
                 selectedProjectFn
